@@ -13,10 +13,6 @@ import java.time.LocalDateTime;
 @Table(name = "payments")
 public class Payment extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
@@ -53,20 +49,13 @@ public class Payment extends BaseEntity {
 
     @Column(name = "rejection_reason", columnDefinition = "TEXT")
     private String rejectionReason;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    // Constructors
+// Constructors
     public Payment() {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    
+    
 
     public Student getStudent() { return student; }
     public void setStudent(Student student) { this.student = student; }
@@ -101,9 +90,9 @@ public class Payment extends BaseEntity {
     public String getRejectionReason() { return rejectionReason; }
     public void setRejectionReason(String rejectionReason) { this.rejectionReason = rejectionReason; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    
+    
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    
+    
 }

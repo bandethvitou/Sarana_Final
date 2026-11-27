@@ -13,10 +13,6 @@ import java.time.temporal.ChronoUnit;
 @Table(name = "leave_requests")
 public class LeaveRequest extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @ManyToOne
     @JoinColumn(name = "staff_id", nullable = false)
     private Staff staff;
@@ -66,13 +62,9 @@ public class LeaveRequest extends BaseEntity {
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    
 
     public Staff getStaff() {
         return staff;

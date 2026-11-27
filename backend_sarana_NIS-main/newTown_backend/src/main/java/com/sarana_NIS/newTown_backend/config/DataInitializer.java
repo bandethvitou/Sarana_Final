@@ -29,22 +29,19 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         System.out.println("========================================");
-        System.out.println("📦 Creating demo users...");
+        System.out.println("📦 Creating 7 Phase-1 users...");
         System.out.println("========================================");
 
-        // Create users with valid UserRole enum values
-        createUser("director@nis.edu",    "B.",  "Soth",      "director123",    UserRole.DIRECTOR);
-        createUser("topmanager@nis.edu",  "T.",  "Manager",   "topmanager123",  UserRole.TOP_MANAGER);
-        createUser("manager@nis.edu",     "M.",  "Ly",        "manager123",     UserRole.MANAGER);
-        createUser("teacher@nis.edu",     "T.",  "Eacher",    "teacher123",     UserRole.TEACHER);
-        createUser("student@nis.edu",     "S.",  "Tudent",    "student123",     UserRole.STUDENT);
-        createUser("parent@nis.edu",      "P.",  "Arent",     "parent123",      UserRole.PARENT);
-        createUser("finance@nis.edu",     "F.",  "Inance",    "finance123",     UserRole.FINANCE_ADMIN);
-        createUser("staff@nis.edu",       "S.",  "Vann",      "staff123",       UserRole.STAFF);
-        createUser("admin@nis.edu",       "A.",  "Dmin",      "admin123",       UserRole.ADMIN);
+        createUser("director@nis.edu",   "B.", "Soth",    "director123",   UserRole.DIRECTOR);
+        createUser("topmanager@nis.edu", "T.", "Manager", "topmanager123", UserRole.TOP_MANAGER);
+        createUser("manager@nis.edu",    "M.", "Ly",      "manager123",    UserRole.MANAGER);
+        createUser("reception@nis.edu",  "R.", "Recept",  "reception123",  UserRole.RECEPTIONIST);
+        createUser("teacher@nis.edu",    "T.", "Eacher",  "teacher123",    UserRole.TEACHER);
+        createUser("student@nis.edu",    "S.", "Tudent",  "student123",    UserRole.STUDENT);
+        createUser("parent@nis.edu",     "P.", "Arent",   "parent123",     UserRole.PARENT);
 
         System.out.println("========================================");
-        System.out.println("🎉 User seeding complete! Total: " + userRepository.count());
+        System.out.println("🎉 Seeded 7 users successfully!");
         System.out.println("========================================");
     }
 

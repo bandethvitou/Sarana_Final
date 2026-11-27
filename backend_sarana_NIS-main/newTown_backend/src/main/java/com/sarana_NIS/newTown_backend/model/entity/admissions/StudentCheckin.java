@@ -15,10 +15,6 @@ import java.time.LocalTime;
         uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "checkin_date"}))
 public class StudentCheckin extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // ✅ This field exists
-
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
@@ -69,13 +65,9 @@ public class StudentCheckin extends BaseEntity {
     }
 
     // Getters and Setters
-    public Long getId() {  // ✅ This getter exists
-        return id;
-    }
+    
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    
 
     public Student getStudent() {
         return student;

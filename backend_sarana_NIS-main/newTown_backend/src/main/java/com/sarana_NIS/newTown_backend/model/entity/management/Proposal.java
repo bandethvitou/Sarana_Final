@@ -11,10 +11,6 @@ import java.time.LocalDateTime;
 @Table(name = "proposals")
 public class Proposal extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(nullable = false, length = 255)
     private String title;
 
@@ -103,13 +99,9 @@ public class Proposal extends BaseEntity {
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    
 
     public String getTitle() {
         return title;

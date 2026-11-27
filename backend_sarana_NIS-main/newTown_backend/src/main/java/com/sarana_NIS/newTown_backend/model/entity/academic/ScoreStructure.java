@@ -73,11 +73,7 @@ public class ScoreStructure extends BaseEntity {
 
     @Column(name = "total_max")
     private Double totalMax = 100.0;
-
-    @Column(name = "is_active")
-    private Boolean isActive = true;
-
-    @ManyToOne
+@ManyToOne
     @JoinColumn(name = "created_by_user")
     private User createdByUser;
 
@@ -163,8 +159,8 @@ public class ScoreStructure extends BaseEntity {
     public Double getTotalMax() { return totalMax; }
     public void setTotalMax(Double totalMax) { this.totalMax = totalMax; }
 
-    public Boolean getIsActive() { return isActive; }
-    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+    
+    
 
     public User getCreatedByUser() { return createdByUser; }
     public void setCreatedByUser(User createdByUser) { this.createdByUser = createdByUser; }

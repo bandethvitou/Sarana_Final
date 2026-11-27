@@ -13,10 +13,6 @@ import java.time.LocalDateTime;
 @Table(name = "expenses")
 public class Expense extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ExpenseCategory category;
@@ -57,8 +53,8 @@ public class Expense extends BaseEntity {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    
+    
 
     public ExpenseCategory getCategory() { return category; }
     public void setCategory(ExpenseCategory category) { this.category = category; }

@@ -11,10 +11,6 @@ import java.time.LocalDate;
 @Table(name = "meeting_minutes")
 public class MeetingMinute extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @ManyToOne
     @JoinColumn(name = "meeting_id")
     private Meeting meeting;
@@ -51,13 +47,9 @@ public class MeetingMinute extends BaseEntity {
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    
 
     public Meeting getMeeting() {
         return meeting;

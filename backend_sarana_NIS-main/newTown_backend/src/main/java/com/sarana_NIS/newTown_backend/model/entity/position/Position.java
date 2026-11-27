@@ -7,10 +7,6 @@ import jakarta.persistence.*;
 @Table(name = "positions")
 public class Position extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // ✅ This field exists
-
     @Column(unique = true, nullable = false, length = 50)
     private String name;
 
@@ -30,13 +26,9 @@ public class Position extends BaseEntity {
     }
 
     // Getters and Setters
-    public Long getId() {  // ✅ This getter exists
-        return id;
-    }
+    
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    
 
     public String getName() {
         return name;

@@ -11,10 +11,6 @@ import java.util.List;
 @Table(name = "subjects")
 public class Subject extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(nullable = false, length = 100)
     private String name;
 
@@ -31,9 +27,6 @@ public class Subject extends BaseEntity {
     @Column(name = "credits")
     private Integer credits = 0;
 
-    @Column(name = "is_active")
-    private Boolean isActive = true;
-
     @OneToMany(mappedBy = "subject")
     private List<ClassSubject> classSubjects = new ArrayList<>();
 
@@ -44,18 +37,10 @@ public class Subject extends BaseEntity {
     public Subject(String name, String code) {
         this.name = name;
         this.code = code;
-        this.isActive = true;
+        this.setIsActive(true); // FIXED: Use setter
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
@@ -96,14 +81,6 @@ public class Subject extends BaseEntity {
         this.credits = credits;
     }
 
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
-
     public List<ClassSubject> getClassSubjects() {
         return classSubjects;
     }
@@ -114,14 +91,14 @@ public class Subject extends BaseEntity {
 
     // Helper methods
     public boolean isActive() {
-        return this.isActive != null && this.isActive;
+        return this.getIsActive() != null && this.getIsActive(); // FIXED: Use getter
     }
 
     public void deactivate() {
-        this.isActive = false;
+        this.setIsActive(false); // FIXED: Use setter
     }
 
     public void activate() {
-        this.isActive = true;
+        this.setIsActive(true); // FIXED: Use setter
     }
 }

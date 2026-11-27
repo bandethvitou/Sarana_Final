@@ -12,10 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "bills")
 public class Bill extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "bill_type", nullable = false)
     private String billType;
 
@@ -52,8 +48,8 @@ public class Bill extends BaseEntity {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    
+    
 
     public String getBillType() { return billType; }
     public void setBillType(String billType) { this.billType = billType; }

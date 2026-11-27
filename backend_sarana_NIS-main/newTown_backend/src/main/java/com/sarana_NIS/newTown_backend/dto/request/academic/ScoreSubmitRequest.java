@@ -1,5 +1,6 @@
 package com.sarana_NIS.newTown_backend.dto.request.academic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,26 +15,38 @@ public class ScoreSubmitRequest {
     @Size(max = 20, message = "Term must be less than 20 characters")
     private String term;
 
-    @NotNull(message = "Class Subject ID is required")
+    private String month; // Added for the frontend requirement
+
+    @JsonProperty("classId")
+    private Long classId;
+
+    @JsonProperty("subjectId")
+    private Long subjectId;
+
+    // The backend uses classSubjectId internally, but the frontend sends classId & subjectId
     private Long classSubjectId;
 
+    @JsonProperty("students")
     @NotEmpty(message = "At least one score is required")
     private List<ScoreEntry> scores = new ArrayList<>();
 
     @Size(max = 500, message = "Comment must be less than 500 characters")
     private String comment;
 
-    // Constructors
     public ScoreSubmitRequest() {}
-
-    public ScoreSubmitRequest(Long classSubjectId, String term) {
-        this.classSubjectId = classSubjectId;
-        this.term = term;
-    }
 
     // Getters and Setters
     public String getTerm() { return term; }
     public void setTerm(String term) { this.term = term; }
+
+    public String getMonth() { return month; }
+    public void setMonth(String month) { this.month = month; }
+
+    public Long getClassId() { return classId; }
+    public void setClassId(Long classId) { this.classId = classId; }
+
+    public Long getSubjectId() { return subjectId; }
+    public void setSubjectId(Long subjectId) { this.subjectId = subjectId; }
 
     public Long getClassSubjectId() { return classSubjectId; }
     public void setClassSubjectId(Long classSubjectId) { this.classSubjectId = classSubjectId; }
@@ -44,45 +57,40 @@ public class ScoreSubmitRequest {
     public String getComment() { return comment; }
     public void setComment(String comment) { this.comment = comment; }
 
-    // Inner class
+    // Inner class mapping exactly to the frontend JSON
     public static class ScoreEntry {
         @NotNull(message = "Student ID is required")
         private Long studentId;
 
-        @Min(value = 0, message = "Homework score must be between 0 and 10")
-        @Max(value = 10, message = "Homework score must be between 0 and 10")
+        @JsonProperty("homework")
+        @Min(value = 0) @Max(value = 10)
         private Double homeworkScore;
 
-        @Min(value = 0, message = "Group work score must be between 0 and 10")
-        @Max(value = 10, message = "Group work score must be between 0 and 10")
+        @JsonProperty("group_work")
+        @Min(value = 0) @Max(value = 10)
         private Double groupWorkScore;
 
-        @Min(value = 0, message = "Attendance score must be between 0 and 10")
-        @Max(value = 10, message = "Attendance score must be between 0 and 10")
+        @JsonProperty("attendance")
+        @Min(value = 0) @Max(value = 10)
         private Double attendanceScore;
 
-        @Min(value = 0, message = "Activity score must be between 0 and 10")
-        @Max(value = 10, message = "Activity score must be between 0 and 10")
+        @JsonProperty("activity")
+        @Min(value = 0) @Max(value = 10)
         private Double activityScore;
 
-        @Min(value = 0, message = "Multiple choice score must be between 0 and 20")
-        @Max(value = 20, message = "Multiple choice score must be between 0 and 20")
+        @JsonProperty("multiple_choice")
+        @Min(value = 0) @Max(value = 20)
         private Double multipleChoiceScore;
 
-        @Min(value = 0, message = "Theory score must be between 0 and 20")
-        @Max(value = 20, message = "Theory score must be between 0 and 20")
+        @JsonProperty("theory")
+        @Min(value = 0) @Max(value = 20)
         private Double theoryScore;
 
-        @Min(value = 0, message = "Practice score must be between 0 and 20")
-        @Max(value = 20, message = "Practice score must be between 0 and 20")
+        @JsonProperty("practice")
+        @Min(value = 0) @Max(value = 20)
         private Double practiceScore;
 
-        // Constructors
-        public ScoreEntry() {}
-
-        public ScoreEntry(Long studentId) {
-            this.studentId = studentId;
-        }
+        private String comment;
 
         // Getters and Setters
         public Long getStudentId() { return studentId; }
@@ -108,5 +116,8 @@ public class ScoreSubmitRequest {
 
         public Double getPracticeScore() { return practiceScore; }
         public void setPracticeScore(Double practiceScore) { this.practiceScore = practiceScore; }
+
+        public String getComment() { return comment; }
+        public void setComment(String comment) { this.comment = comment; }
     }
 }

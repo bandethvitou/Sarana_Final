@@ -28,7 +28,6 @@ public abstract class BaseEntity {
     @Column(name = "is_active")
     private Boolean isActive = true;
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

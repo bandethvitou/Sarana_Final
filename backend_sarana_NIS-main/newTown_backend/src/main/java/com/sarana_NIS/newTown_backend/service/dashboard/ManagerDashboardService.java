@@ -1,7 +1,6 @@
 package com.sarana_NIS.newTown_backend.service.dashboard;
 
 import com.sarana_NIS.newTown_backend.model.enums.EmployeeStatus;
-import com.sarana_NIS.newTown_backend.repository.HiringRequestRepository;
 import com.sarana_NIS.newTown_backend.repository.LeaveRequestRepository;
 import com.sarana_NIS.newTown_backend.repository.StaffRepository;
 import com.sarana_NIS.newTown_backend.repository.TaskRepository;
@@ -20,16 +19,13 @@ public class ManagerDashboardService {
 
     private final StaffRepository staffRepository;
     private final LeaveRequestRepository leaveRequestRepository;
-    private final HiringRequestRepository hiringRequestRepository;
     private final TaskRepository taskRepository;
 
     public ManagerDashboardService(StaffRepository staffRepository,
                                    LeaveRequestRepository leaveRequestRepository,
-                                   HiringRequestRepository hiringRequestRepository,
                                    TaskRepository taskRepository) {
         this.staffRepository = staffRepository;
         this.leaveRequestRepository = leaveRequestRepository;
-        this.hiringRequestRepository = hiringRequestRepository;
         this.taskRepository = taskRepository;
     }
 
@@ -40,10 +36,9 @@ public class ManagerDashboardService {
         Map<String, Object> stats = new HashMap<>();
 
         stats.put("totalStaff", staffRepository.count());
-        // ✅ FIXED: Use countByStatus(EmployeeStatus.ACTIVE)
         stats.put("activeStaff", staffRepository.countByStatus(EmployeeStatus.ACTIVE));
         stats.put("pendingLeaves", leaveRequestRepository.countPendingLeaves());
-        stats.put("pendingHiring", hiringRequestRepository.countPendingRequests());
+        stats.put("pendingHiring", 0); // Removed HiringRequestRepository
         stats.put("pendingTasks", taskRepository.countActiveTasks());
         stats.put("completedTasks", taskRepository.countCompletedTasks());
 
@@ -68,7 +63,7 @@ public class ManagerDashboardService {
 
         Map<String, Object> items = new HashMap<>();
         items.put("pendingLeaves", leaveRequestRepository.countPendingLeaves());
-        items.put("pendingHiring", hiringRequestRepository.countPendingRequests());
+        items.put("pendingHiring", 0); // Removed HiringRequestRepository
         items.put("pendingTasks", taskRepository.countActiveTasks());
 
         return items;

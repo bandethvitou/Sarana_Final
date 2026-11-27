@@ -1,5 +1,6 @@
 package com.sarana_NIS.newTown_backend.model.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sarana_NIS.newTown_backend.model.entity.BaseEntity;
 import com.sarana_NIS.newTown_backend.model.entity.academic.Attendance;
 import com.sarana_NIS.newTown_backend.model.entity.academic.Class;
@@ -20,10 +21,6 @@ import java.util.Set;
 @Entity
 @Table(name = "students")
 public class Student extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(name = "student_id", nullable = false, unique = true, length = 50)
     private String studentId;
@@ -82,7 +79,8 @@ public class Student extends BaseEntity {
     @JoinColumn(name = "department_id")
     private Department department;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore // <--- PREVENTS INFINITE LOOP IN JSON
+    @ManyToMany(fetch = FetchType.LAZY) // <--- PREVENTS MASSIVE SQL QUERY
     @JoinTable(
             name = "student_parents",
             joinColumns = @JoinColumn(name = "student_id"),
@@ -95,10 +93,6 @@ public class Student extends BaseEntity {
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Score> scores = new ArrayList<>();
-
-    // ============================================================
-    // CONSTRUCTORS
-    // ============================================================
 
     public Student() {
         this.studentStatus = EnrollmentStatus.ACTIVE;
@@ -116,55 +110,31 @@ public class Student extends BaseEntity {
         this.scores = new ArrayList<>();
     }
 
-    // ============================================================
-    // PARENT MANAGEMENT METHODS
-    // ============================================================
-
-    /**
-     * Add a parent to this student
-     */
     public void addParent(Parent parent) {
         if (this.parents == null) {
             this.parents = new HashSet<>();
         }
         this.parents.add(parent);
-        // Also add this student to the parent's students set
         if (!parent.getStudents().contains(this)) {
             parent.getStudents().add(this);
         }
     }
 
-    /**
-     * Remove a parent from this student
-     */
     public void removeParent(Parent parent) {
         if (this.parents != null) {
             this.parents.remove(parent);
-            // Also remove this student from the parent's students set
             if (parent.getStudents() != null) {
                 parent.getStudents().remove(this);
             }
         }
     }
 
-    /**
-     * Check if this student has a specific parent
-     */
     public boolean hasParent(Parent parent) {
         return this.parents != null && this.parents.contains(parent);
     }
 
-    public Set<Parent> getParents() {
-        return parents;
-    }
-
-    public void setParents(Set<Parent> parents) {
-        this.parents = parents;
-    }
-
-    // ============================================================
-    // SCORE MANAGEMENT METHODS
-    // ============================================================
+    public Set<Parent> getParents() { return parents; }
+    public void setParents(Set<Parent> parents) { this.parents = parents; }
 
     public void addScore(Score score) {
         if (this.scores == null) {
@@ -181,25 +151,11 @@ public class Student extends BaseEntity {
         }
     }
 
-    public List<Score> getScores() {
-        return scores;
-    }
+    public List<Score> getScores() { return scores; }
+    public void setScores(List<Score> scores) { this.scores = scores; }
 
-    public void setScores(List<Score> scores) {
-        this.scores = scores;
-    }
-
-    // ============================================================
-    // GPA CALCULATION
-    // ============================================================
-
-    /**
-     * Calculate GPA based on all scores
-     */
     public Double calculateGPA() {
-        if (this.scores == null || this.scores.isEmpty()) {
-            return null;
-        }
+        if (this.scores == null || this.scores.isEmpty()) return null;
         return this.scores.stream()
                 .filter(s -> s.getTotalScore() != null)
                 .mapToDouble(Score::getTotalScore)
@@ -207,54 +163,16 @@ public class Student extends BaseEntity {
                 .orElse(0.0);
     }
 
-    // ============================================================
-    // STATUS CHECK METHODS
-    // ============================================================
+    public boolean isActive() { return this.studentStatus == EnrollmentStatus.ACTIVE; }
+    public boolean isGraduated() { return this.studentStatus == EnrollmentStatus.GRADUATED; }
+    public boolean isDropped() { return this.studentStatus == EnrollmentStatus.DROPPED; }
+    public boolean isSuspended() { return this.studentStatus == EnrollmentStatus.SUSPENDED; }
+    public boolean isEnrolled() { return this.studentStatus == EnrollmentStatus.ENROLLED; }
 
-    public boolean isActive() {
-        return this.studentStatus == EnrollmentStatus.ACTIVE;
-    }
+    public String getStudentId() { return studentId; }
+    public void setStudentId(String studentId) { this.studentId = studentId; }
 
-    public boolean isGraduated() {
-        return this.studentStatus == EnrollmentStatus.GRADUATED;
-    }
-
-    public boolean isDropped() {
-        return this.studentStatus == EnrollmentStatus.DROPPED;
-    }
-
-    public boolean isSuspended() {
-        return this.studentStatus == EnrollmentStatus.SUSPENDED;
-    }
-
-    public boolean isEnrolled() {
-        return this.studentStatus == EnrollmentStatus.ENROLLED;
-    }
-
-    // ============================================================
-    // GETTERS AND SETTERS
-    // ============================================================
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(String studentId) {
-        this.studentId = studentId;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
+    public User getUser() { return user; }
     public void setUser(User user) {
         this.user = user;
         if (user != null) {
@@ -263,135 +181,53 @@ public class Student extends BaseEntity {
         }
     }
 
-    public String getNameKhmer() {
-        return nameKhmer;
-    }
+    public String getNameKhmer() { return nameKhmer; }
+    public void setNameKhmer(String nameKhmer) { this.nameKhmer = nameKhmer; }
 
-    public void setNameKhmer(String nameKhmer) {
-        this.nameKhmer = nameKhmer;
-    }
+    public String getNameEnglish() { return nameEnglish; }
+    public void setNameEnglish(String nameEnglish) { this.nameEnglish = nameEnglish; }
 
-    public String getNameEnglish() {
-        return nameEnglish;
-    }
+    public String getNameArabic() { return nameArabic; }
+    public void setNameArabic(String nameArabic) { this.nameArabic = nameArabic; }
 
-    public void setNameEnglish(String nameEnglish) {
-        this.nameEnglish = nameEnglish;
-    }
+    public String getFullName() { return nameEnglish; }
 
-    public String getNameArabic() {
-        return nameArabic;
-    }
+    public LocalDate getDateOfBirth() { return dateOfBirth; }
+    public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
 
-    public void setNameArabic(String nameArabic) {
-        this.nameArabic = nameArabic;
-    }
+    public Gender getGender() { return gender; }
+    public void setGender(Gender gender) { this.gender = gender; }
 
-    public String getFullName() {
-        return nameEnglish;
-    }
+    public Level getLevel() { return level; }
+    public void setLevel(Level level) { this.level = level; }
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
+    public String getPreviousSchool() { return previousSchool; }
+    public void setPreviousSchool(String previousSchool) { this.previousSchool = previousSchool; }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
+    public String getMedicalNotes() { return medicalNotes; }
+    public void setMedicalNotes(String medicalNotes) { this.medicalNotes = medicalNotes; }
 
-    public Gender getGender() {
-        return gender;
-    }
+    public EnrollmentStatus getStudentStatus() { return studentStatus; }
+    public void setStudentStatus(EnrollmentStatus studentStatus) { this.studentStatus = studentStatus; }
 
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
+    public LocalDate getEnrollmentDate() { return enrollmentDate; }
+    public void setEnrollmentDate(LocalDate enrollmentDate) { this.enrollmentDate = enrollmentDate; }
 
-    public Level getLevel() {
-        return level;
-    }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
 
-    public void setLevel(Level level) {
-        this.level = level;
-    }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
-    public String getPreviousSchool() {
-        return previousSchool;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setPreviousSchool(String previousSchool) {
-        this.previousSchool = previousSchool;
-    }
+    public Class getCurrentClass() { return currentClass; }
+    public void setCurrentClass(Class currentClass) { this.currentClass = currentClass; }
 
-    public String getMedicalNotes() {
-        return medicalNotes;
-    }
+    public Department getDepartment() { return department; }
+    public void setDepartment(Department department) { this.department = department; }
 
-    public void setMedicalNotes(String medicalNotes) {
-        this.medicalNotes = medicalNotes;
-    }
-
-    public EnrollmentStatus getStudentStatus() {
-        return studentStatus;
-    }
-
-    public void setStudentStatus(EnrollmentStatus studentStatus) {
-        this.studentStatus = studentStatus;
-    }
-
-    public LocalDate getEnrollmentDate() {
-        return enrollmentDate;
-    }
-
-    public void setEnrollmentDate(LocalDate enrollmentDate) {
-        this.enrollmentDate = enrollmentDate;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Class getCurrentClass() {
-        return currentClass;
-    }
-
-    public void setCurrentClass(Class currentClass) {
-        this.currentClass = currentClass;
-    }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
-
-    public List<Attendance> getAttendances() {
-        return attendances;
-    }
-
-    public void setAttendances(List<Attendance> attendances) {
-        this.attendances = attendances;
-    }
+    public List<Attendance> getAttendances() { return attendances; }
+    public void setAttendances(List<Attendance> attendances) { this.attendances = attendances; }
 }

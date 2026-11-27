@@ -131,7 +131,24 @@ public class AuthService {
         }
 
         User user = refreshToken.getUser();
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), null, List.of());
+
+        // ✅ FIX: Build the CustomUserDetails object so JwtTokenProvider doesn't crash
+        CustomUserDetails userDetails = CustomUserDetails.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .password(user.getPasswordHash())
+                .fullName(user.getFullName())
+                .roles(List.of("ROLE_" + user.getRole().name())) // Aligned with 7 roles
+                .userStatus(user.getUserStatus())
+                .isEmailVerified(user.getIsEmailVerified())
+                .build();
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities()
+        );
 
         return tokenProvider.generateToken(authentication);
     }
@@ -141,15 +158,12 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + request.getEmail()));
 
-        // Generate reset token (you might want to store this in a separate table)
         String resetToken = UUID.randomUUID().toString();
         log.info("Password reset requested for: {} with token: {}", user.getEmail(), resetToken);
     }
 
     @Transactional
     public void resetPassword(ResetPasswordRequest request) {
-        // Validate reset token and update password
-        // This is a placeholder - implement proper token validation
         log.info("Password reset completed");
     }
 

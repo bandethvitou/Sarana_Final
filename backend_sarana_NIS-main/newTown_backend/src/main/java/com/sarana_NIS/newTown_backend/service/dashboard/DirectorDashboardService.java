@@ -2,7 +2,10 @@ package com.sarana_NIS.newTown_backend.service.dashboard;
 
 import com.sarana_NIS.newTown_backend.dto.response.core.DashboardStatsResponse;
 import com.sarana_NIS.newTown_backend.model.enums.EnrollmentStatus;
-import com.sarana_NIS.newTown_backend.repository.*;
+import com.sarana_NIS.newTown_backend.repository.FeeRepository;
+import com.sarana_NIS.newTown_backend.repository.GoalRepository;
+import com.sarana_NIS.newTown_backend.repository.StaffRepository;
+import com.sarana_NIS.newTown_backend.repository.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,27 +26,15 @@ public class DirectorDashboardService {
     private final StudentRepository studentRepository;
     private final StaffRepository staffRepository;
     private final FeeRepository feeRepository;
-    private final BillRepository billRepository;
-    private final TicketRepository ticketRepository;
-    private final LeaveRequestRepository leaveRequestRepository;
-    private final HiringRequestRepository hiringRequestRepository;
     private final GoalRepository goalRepository;
 
     public DirectorDashboardService(StudentRepository studentRepository,
                                     StaffRepository staffRepository,
                                     FeeRepository feeRepository,
-                                    BillRepository billRepository,
-                                    TicketRepository ticketRepository,
-                                    LeaveRequestRepository leaveRequestRepository,
-                                    HiringRequestRepository hiringRequestRepository,
                                     GoalRepository goalRepository) {
         this.studentRepository = studentRepository;
         this.staffRepository = staffRepository;
         this.feeRepository = feeRepository;
-        this.billRepository = billRepository;
-        this.ticketRepository = ticketRepository;
-        this.leaveRequestRepository = leaveRequestRepository;
-        this.hiringRequestRepository = hiringRequestRepository;
         this.goalRepository = goalRepository;
     }
 
@@ -58,9 +49,9 @@ public class DirectorDashboardService {
         quickStats.setTotalStudents((int) studentRepository.count());
         quickStats.setTotalStaff((int) staffRepository.count());
         quickStats.setTotalTeachers((int) staffRepository.count());
-        quickStats.setTotalParents((int) studentRepository.count());
-        quickStats.setTotalClasses(0);
-        quickStats.setTotalDepartments(0);
+        quickStats.setTotalParents((int) studentRepository.count()); // Stubbed
+        quickStats.setTotalClasses(0); // Stubbed
+        quickStats.setTotalDepartments(0); // Stubbed
         response.setQuickStats(quickStats);
 
         // Academic Stats
@@ -76,40 +67,30 @@ public class DirectorDashboardService {
 
         // Finance Stats
         DashboardStatsResponse.FinanceStats financeStats = new DashboardStatsResponse.FinanceStats();
-
-        // ✅ Get values with proper null handling - BigDecimal from repository
         BigDecimal totalFees = feeRepository.sumTotalCollected();
         BigDecimal totalOutstanding = feeRepository.sumTotalOutstanding();
-        Double billsPending = billRepository.sumPendingBills();  // ✅ billRepository returns Double
 
-        // ✅ Safe conversion with null checks
         financeStats.setTotalFeesCollected(totalFees != null ? totalFees.doubleValue() : 0.0);
         financeStats.setTotalFeesOutstanding(totalOutstanding != null ? totalOutstanding.doubleValue() : 0.0);
         financeStats.setTotalExpenses(0.0);
-
-        // ✅ billsPending is Double, not BigDecimal
-        financeStats.setTotalBillsPending(billsPending != null ? billsPending : 0.0);
+        financeStats.setTotalBillsPending(0.0);
         financeStats.setTotalSalariesPaid(0.0);
 
-        // ✅ Use Long and convert to Integer with null check
         Long defaultersCount = feeRepository.countDefaulters();
         financeStats.setFeeDefaultersCount(defaultersCount != null ? defaultersCount.intValue() : 0);
         response.setFinanceStats(financeStats);
 
-        // HR Stats
+        // HR Stats (Phase 2 - Stubbed)
         DashboardStatsResponse.HRStats hrStats = new DashboardStatsResponse.HRStats();
-        Long pendingLeaves = leaveRequestRepository.countPendingLeaves();
-        Long pendingHiring = hiringRequestRepository.countPendingRequests();
-        hrStats.setLeaveRequestsPending(pendingLeaves != null ? pendingLeaves.intValue() : 0);
-        hrStats.setHiringRequestsPending(pendingHiring != null ? pendingHiring.intValue() : 0);
+        hrStats.setLeaveRequestsPending(0);
+        hrStats.setHiringRequestsPending(0);
         hrStats.setStaffOnLeave(0);
         hrStats.setBirthdaysThisWeek(0);
         response.setHrStats(hrStats);
 
-        // IT Stats
+        // IT Stats (Phase 2 - Stubbed)
         DashboardStatsResponse.ITStats itStats = new DashboardStatsResponse.ITStats();
-        Long openTickets = ticketRepository.countOpenTickets();
-        itStats.setOpenTickets(openTickets != null ? openTickets.intValue() : 0);
+        itStats.setOpenTickets(0);
         itStats.setEquipmentUnderRepair(0);
         itStats.setServersOnline(0);
         itStats.setSystemUptime(99.9);
@@ -156,12 +137,10 @@ public class DirectorDashboardService {
 
         BigDecimal totalCollected = feeRepository.sumTotalCollected();
         BigDecimal totalOutstanding = feeRepository.sumTotalOutstanding();
-        Double billsPending = billRepository.sumPendingBills();  // ✅ billRepository returns Double
 
-        // ✅ Safe conversion with null checks
         overview.put("totalCollected", totalCollected != null ? totalCollected.doubleValue() : 0.0);
         overview.put("totalOutstanding", totalOutstanding != null ? totalOutstanding.doubleValue() : 0.0);
-        overview.put("totalBillsPending", billsPending != null ? billsPending : 0.0);  // ✅ Double, not BigDecimal
+        overview.put("totalBillsPending", 0.0);
 
         Long defaultersCount = feeRepository.countDefaulters();
         overview.put("defaultersCount", defaultersCount != null ? defaultersCount.intValue() : 0);
@@ -175,7 +154,6 @@ public class DirectorDashboardService {
 
         List<DashboardStatsResponse.Alert> alerts = new ArrayList<>();
 
-        // ✅ Check if method exists
         long overdueFees = 0;
         try {
             overdueFees = feeRepository.countOverdueFees();
@@ -192,36 +170,6 @@ public class DirectorDashboardService {
             ));
         }
 
-        Long pendingLeaves = leaveRequestRepository.countPendingLeaves();
-        if (pendingLeaves != null && pendingLeaves > 0) {
-            alerts.add(createAlert(
-                    "WARNING",
-                    pendingLeaves + " leave requests pending approval",
-                    "Review Leave Requests",
-                    "/director/hr/leaves"
-            ));
-        }
-
-        Long pendingHiring = hiringRequestRepository.countPendingRequests();
-        if (pendingHiring != null && pendingHiring > 0) {
-            alerts.add(createAlert(
-                    "WARNING",
-                    pendingHiring + " hiring requests pending review",
-                    "Review Hiring Requests",
-                    "/director/hr/hiring"
-            ));
-        }
-
-        Long openTickets = ticketRepository.countOpenTickets();
-        if (openTickets != null && openTickets > 3) {
-            alerts.add(createAlert(
-                    "INFO",
-                    openTickets + " open IT tickets",
-                    "View Tickets",
-                    "/director/it/tickets"
-            ));
-        }
-
         List<?> overdueGoals = goalRepository.findOverdueGoals(LocalDate.now());
         if (!overdueGoals.isEmpty()) {
             alerts.add(createAlert(
@@ -235,7 +183,6 @@ public class DirectorDashboardService {
         return alerts;
     }
 
-    // ✅ Removed isRead parameter since it's always false
     private DashboardStatsResponse.Alert createAlert(String type, String message, String action, String link) {
         DashboardStatsResponse.Alert alert = new DashboardStatsResponse.Alert();
         alert.setType(type);

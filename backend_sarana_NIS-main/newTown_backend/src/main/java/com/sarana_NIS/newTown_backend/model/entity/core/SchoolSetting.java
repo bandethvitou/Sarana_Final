@@ -9,10 +9,6 @@ import java.time.LocalDateTime;
 @Table(name = "school_settings")
 public class SchoolSetting extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "school_name", length = 200)
     private String schoolName;
 
@@ -83,13 +79,9 @@ public class SchoolSetting extends BaseEntity {
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    
 
     public String getSchoolName() {
         return schoolName;

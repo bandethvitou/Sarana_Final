@@ -14,10 +14,6 @@ import java.time.LocalDate;
 @Table(name = "correspondence")
 public class Correspondence extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CorrespondenceType type;
@@ -65,13 +61,9 @@ public class Correspondence extends BaseEntity {
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    
 
     public CorrespondenceType getType() {
         return type;

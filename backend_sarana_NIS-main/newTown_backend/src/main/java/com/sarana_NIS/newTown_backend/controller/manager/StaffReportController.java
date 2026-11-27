@@ -1,11 +1,8 @@
 package com.sarana_NIS.newTown_backend.controller.manager;
 
 import com.sarana_NIS.newTown_backend.dto.response.common.ApiResponse;
-import com.sarana_NIS.newTown_backend.dto.response.hr.LeaveResponse;
-import com.sarana_NIS.newTown_backend.dto.response.hr.LeaveSummaryResponse;
 import com.sarana_NIS.newTown_backend.dto.response.user.StaffResponse;
 import com.sarana_NIS.newTown_backend.security.annotation.RequiresRole;
-import com.sarana_NIS.newTown_backend.service.hr.LeaveRequestService;
 import com.sarana_NIS.newTown_backend.service.user.StaffService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -25,11 +21,10 @@ public class StaffReportController {
     private static final Logger log = LoggerFactory.getLogger(StaffReportController.class);
 
     private final StaffService staffService;
-    private final LeaveRequestService leaveRequestService;
 
-    public StaffReportController(StaffService staffService, LeaveRequestService leaveRequestService) {
+    // We removed LeaveRequestService because HR is Phase 2
+    public StaffReportController(StaffService staffService) {
         this.staffService = staffService;
-        this.leaveRequestService = leaveRequestService;
     }
 
     @GetMapping
@@ -37,7 +32,8 @@ public class StaffReportController {
     @Operation(summary = "Get all staff reports")
     public ResponseEntity<ApiResponse<List<StaffResponse>>> getAllStaffReports() {
         log.info("Fetching all staff reports");
-        return ResponseEntity.ok(ApiResponse.success(null)); // TODO: Implement
+        // TODO: Implement Phase 2
+        return ResponseEntity.ok(ApiResponse.success(java.util.Collections.emptyList()));
     }
 
     @GetMapping("/{id}")
@@ -62,37 +58,26 @@ public class StaffReportController {
     @GetMapping("/leaves")
     @RequiresRole("MANAGER")
     @Operation(summary = "Get leave reports")
-    public ResponseEntity<ApiResponse<List<LeaveResponse>>> getLeaveReports() {
+    public ResponseEntity<ApiResponse<Object>> getLeaveReports() {
         log.info("Fetching leave reports");
-        List<LeaveResponse> leaves = leaveRequestService.getAllLeaveRequests();
-        return ResponseEntity.ok(ApiResponse.success(leaves));
+        // HR module is Phase 2. Returning empty for now to prevent frontend crash.
+        return ResponseEntity.ok(ApiResponse.success(java.util.Collections.emptyList()));
     }
 
     @GetMapping("/leaves/pending")
     @RequiresRole("MANAGER")
     @Operation(summary = "Get pending leave requests")
-    public ResponseEntity<ApiResponse<List<LeaveResponse>>> getPendingLeaves() {
+    public ResponseEntity<ApiResponse<Object>> getPendingLeaves() {
         log.info("Fetching pending leave requests");
-        List<LeaveResponse> leaves = leaveRequestService.getPendingLeaveRequests();
-        return ResponseEntity.ok(ApiResponse.success(leaves));
-    }
-
-    @GetMapping("/leaves/summary")
-    @RequiresRole("MANAGER")
-    @Operation(summary = "Get leave summary")
-    public ResponseEntity<ApiResponse<LeaveSummaryResponse>> getLeaveSummary() {
-        log.info("Fetching leave summary");
-        // TODO: Implement leave summary
-        return ResponseEntity.ok(ApiResponse.success(null));
+        return ResponseEntity.ok(ApiResponse.success(java.util.Collections.emptyList()));
     }
 
     @GetMapping("/on-leave")
     @RequiresRole("MANAGER")
     @Operation(summary = "Get staff on leave today")
-    public ResponseEntity<ApiResponse<List<LeaveResponse>>> getStaffOnLeaveToday() {
+    public ResponseEntity<ApiResponse<Object>> getStaffOnLeaveToday() {
         log.info("Fetching staff on leave today");
-        List<LeaveResponse> leaves = leaveRequestService.getStaffOnLeaveToday();
-        return ResponseEntity.ok(ApiResponse.success(leaves));
+        return ResponseEntity.ok(ApiResponse.success(java.util.Collections.emptyList()));
     }
 
     @GetMapping("/stats")
@@ -100,7 +85,6 @@ public class StaffReportController {
     @Operation(summary = "Get staff report statistics")
     public ResponseEntity<ApiResponse<Object>> getStaffReportStats() {
         log.info("Fetching staff report statistics");
-        // TODO: Implement staff report stats
-        return ResponseEntity.ok(ApiResponse.success(null));
+        return ResponseEntity.ok(ApiResponse.success(java.util.Collections.emptyMap()));
     }
 }

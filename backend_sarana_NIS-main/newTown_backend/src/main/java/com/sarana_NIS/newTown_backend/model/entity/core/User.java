@@ -1,5 +1,6 @@
 package com.sarana_NIS.newTown_backend.model.entity.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sarana_NIS.newTown_backend.model.entity.BaseEntity;
 import com.sarana_NIS.newTown_backend.model.entity.user.Staff;
 import com.sarana_NIS.newTown_backend.model.entity.user.Student;
@@ -14,10 +15,6 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 public class User extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(nullable = false, unique = true, length = 50)
     private String username;
@@ -68,7 +65,8 @@ public class User extends BaseEntity {
     @OneToOne(mappedBy = "user")
     private Student student;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore // <--- PREVENTS INFINITE LOOP IN JSON
+    @ManyToMany(fetch = FetchType.LAZY) // <--- PREVENTS MASSIVE SQL QUERY
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -83,9 +81,6 @@ public class User extends BaseEntity {
         this.accountLocked = false;
         this.roles = new HashSet<>();
     }
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
@@ -162,17 +157,11 @@ public class User extends BaseEntity {
         }
     }
 
-    public boolean hasRole(Role role) {
-        return this.roles != null && this.roles.contains(role);
-    }
+    public boolean hasRole(Role role) { return this.roles != null && this.roles.contains(role); }
 
-    public boolean isActive() {
-        return this.userStatus == UserStatus.ACTIVE;
-    }
+    public boolean isActive() { return this.userStatus == UserStatus.ACTIVE; }
 
-    public boolean isAccountLocked() {
-        return this.accountLocked != null && this.accountLocked;
-    }
+    public boolean isAccountLocked() { return this.accountLocked != null && this.accountLocked; }
 
     public void incrementFailedLoginAttempts() {
         if (this.failedLoginAttempts == null) this.failedLoginAttempts = 0;

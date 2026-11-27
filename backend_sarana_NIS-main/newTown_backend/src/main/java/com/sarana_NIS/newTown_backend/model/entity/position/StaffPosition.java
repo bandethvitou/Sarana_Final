@@ -11,10 +11,6 @@ import java.time.LocalDate;
 @Table(name = "staff_positions")
 public class StaffPosition extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // ✅ This field exists
-
     @ManyToOne
     @JoinColumn(name = "staff_id", nullable = false)
     private Staff staff;
@@ -35,11 +31,7 @@ public class StaffPosition extends BaseEntity {
 
     @Column(name = "end_date")
     private LocalDate endDate;
-
-    @Column(name = "is_active")
-    private Boolean isActive = true;
-
-    @Column(columnDefinition = "TEXT")
+@Column(columnDefinition = "TEXT")
     private String notes;
 
     // Constructors
@@ -51,13 +43,9 @@ public class StaffPosition extends BaseEntity {
     }
 
     // Getters and Setters
-    public Long getId() {  // ✅ This getter exists
-        return id;
-    }
+    
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    
 
     public Staff getStaff() {
         return staff;
@@ -107,13 +95,9 @@ public class StaffPosition extends BaseEntity {
         this.endDate = endDate;
     }
 
-    public Boolean getIsActive() {
-        return isActive;
-    }
+    
 
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
+    
 
     public String getNotes() {
         return notes;
